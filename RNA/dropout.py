@@ -107,14 +107,24 @@ print(new_prediction > 0.5)
 
 from scikeras.wrappers import KerasClassifier
 from sklearn.model_selection import cross_val_score
-
+from keras.layers import Dropout
 def buildClassifier():
     # inicialitzem la xarxa neuronal artifical RNA
     classifier = Sequential()
     classifier.add(Dense(units=6, kernel_initializer="uniform",
-                         activation="relu", input_shape=(11,)))
+                         activation="relu", input_shape=11))
+    
+    #Afegim capa dropout per evitar el overfitting
+    #p = proporció de neurones desectivades
+    # Si detectem sobreajuste, comencem amb p = 0.1 i anem pujant. màxim 0.5
+    #Es pot aplicar darrere de totes les capes ocultes
+    classifier.add(Dropout(p=0.1))
+    
     classifier.add(Dense(units=6, kernel_initializer="uniform",
                          activation="relu"))
+    classifier.add(Dropout(p=0.1))
+
+
     classifier.add(Dense(units=1, kernel_initializer="uniform",
                          activation="sigmoid"))
     classifier.compile(optimizer="adam", loss="binary_crossentropy",
@@ -125,8 +135,10 @@ classifier = KerasClassifier(model=buildClassifier, batch_size=10, epochs=100)
 
 # cv = validaciones cruzadas (k-folds)
 # n_jobs = -1 es per utilitzar tota la potència del pc (diferents cores)
-accuracies = cross_val_score(estimator=classifier, X = X_train, y = y_train, cv = 10, verbose=1)
+accuracies = cross_val_score(estimator=classifier, X = X_train, y = y_train, cv = 2, verbose=1)
 
 
 print(f"Accuracy mean: {accuracies.mean()}")
 print(f"Accuracy std: {accuracies.std()}")
+
+# millorant RNA
