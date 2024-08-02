@@ -112,17 +112,17 @@ def buildClassifier():
     # inicialitzem la xarxa neuronal artifical RNA
     classifier = Sequential()
     classifier.add(Dense(units=6, kernel_initializer="uniform",
-                         activation="relu", input_shape=11))
+                         activation="relu", input_dim=11))
     
     #Afegim capa dropout per evitar el overfitting
     #p = proporció de neurones desectivades
     # Si detectem sobreajuste, comencem amb p = 0.1 i anem pujant. màxim 0.5
     #Es pot aplicar darrere de totes les capes ocultes
-    classifier.add(Dropout(p=0.1))
+    classifier.add(Dropout(rate=0.1))
     
     classifier.add(Dense(units=6, kernel_initializer="uniform",
                          activation="relu"))
-    classifier.add(Dropout(p=0.1))
+    classifier.add(Dropout(rate=0.1))
 
 
     classifier.add(Dense(units=1, kernel_initializer="uniform",
