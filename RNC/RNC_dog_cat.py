@@ -62,6 +62,41 @@ classifier.add(Dense(units = 1, activation="sigmoid"))
 classifier.compile(optimizer="adam",loss = "binary_crossentropy", metrics = ["accuracy"])
 
 
+# PART 2 - Ajustar la CNN a les imatges de train
+
+from tensorflow.keras.preprocessing.image import ImageDataGenerator
+batch_size = 32
+
+# prepare data augmentation configuration
+train_datagen = ImageDataGenerator(
+        rescale=1./255,
+        shear_range=0.2,
+        zoom_range=0.2,
+        horizontal_flip=True)
+
+test_datagen = ImageDataGenerator(rescale=1./255)
+
+training_dataset = train_datagen.flow_from_directory(
+        "dataset/training_set",
+        target_size=(64, 64),
+        batch_size=batch_size,
+        class_mode='binary')
+
+test_dataset = test_datagen.flow_from_directory(
+        "dataset/test_set",
+        target_size=(64, 64),
+        batch_size=batch_size,
+        class_mode='binary')
+
+# fine-tune the model
+classifier.fit(
+        training_dataset,
+        steps_per_epoch=8000,#numero de imatges de entrenament
+        epochs=5,
+        validation_data=test_dataset,
+        validation_steps=2000)
+
+
 
 
 
